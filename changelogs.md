@@ -1,6 +1,9 @@
 # CHANGELOGS
 
 # 2.0.3
+> fixed big screen now it's functional 
+> additionally ready to add some new features
+# 2.0.3
 > used plugin icon as tab icon
 
 # V 2.0.2

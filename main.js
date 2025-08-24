@@ -6,28 +6,11 @@
     let SideButton = acode.require('sideButton');
     var jsonData = {}; //lets initiolize it empty well ad the things further
     const editorFile = acode.require('editorFile');
-    acode.addIcon('full-screen', 'https://ibb.co/knfL8D9');
+  //  acode.addIcon('full-screen', 'https://ibb.co/knfL8D9');
 
     let oldSetting = settings.get('autosave') /// needs menimum valur 1000 mili seconds
     var e = {
         "id": "liveserver",
-        "name": "Live Server",
-        "main": "main.js",
-        "version": "2.0.3",
-        "readme": "readme.md",
-        "icon": "icon.png",
-        "files": [],
-        "minVersionCode": 290,
-        "license": "",
-        "changelogs": "changelogs.md",
-        "keywords": ["Live Server", "live", "HTML Viewer"],
-        "price": 0,
-        "repository": "https://github.com/hackesofice/Acode-live-server.git",
-        "author": {
-            "name": "HACKESOFICE",
-            "email": "hackesofice@gmail.com",
-            "github": "hackesofice"
-        }
     }
 
     class LiveServer {
@@ -40,7 +23,7 @@
         }
 
         async init() {
-            console.log("LiveServerPlugin initialized!");
+            //console.log("LiveServerPlugin initialized!");
             acode.addIcon('liveserver', `${this.baseUrl}icon.png`);
             // settings.update({
             //     "Live-Server":{
@@ -50,28 +33,75 @@
             // })
             this.reloadFile = () => {
                 try {
+                    // reload on small screen 
                     let iframe = document.getElementById('iframe');
                     if (iframe) {
                         iframe.src = `http://localhost:${jsonData.port}/${jsonData.fileName}`;
                     }
+                    // reload on big screen
+                   // console.log(editorManager.files)
+                    try{
+                        let tab = editorManager.getFile(e.id, 'id')
+                        //console.log(tab)
+                        if (tab){
+                            tab.content.shadowRoot.querySelector(`#iframe22`).src = `http://localhost:${jsonData.port}/${jsonData.fileName}`;
+                        }
+                    }catch (err){
+                        //console.log("tab not found ", err)
+                    }
+                    
                 } catch (err) {
-                    console.log(`Live server error ${err}`);
+                  //  console.log(`Live server error ${err}`);
                 }
             }
+            ////////////////////////////////////
+            //// design the big screen page/////
+            ////////////////////////////////////
             let BigScreenContent = document.createElement('div');
-            BigScreenContent.style.cssText = `
-            height:100%;
-            border: 2px solid black;
-            border-radius: 5px;
-            `;
-            var iframe22 = document.createElement('iframe');
-            iframe22.className = 'iframe22';
-            iframe22.style.cssText = `
-               height:90%;
-               width: 90%;
-               margin:5% 5% 5% 5%;
-               border-radius:5px;
-            `;
+                BigScreenContent.style.cssText = `
+                height:100%;
+                display:flex;
+                flex-direction:column;
+                `;
+                let top_bar = document.createElement('nav');
+                    top_bar.style.cssText = `height: 6%; width:96%; margin-right:auto; margin-left:auto; margin-top:3px; margin-bottom:4px; background-color:gray; position:stiky; display:flex; flex-direction:row; justify-content:space-between; border-radius:10px; border:none; padding:0px 5px`;
+                    
+                    let title_container = document.createElement('span');
+                        title_container.style.cssText = 'margin-top:auto; margin-bottom:auto; margin-left:5px;'
+                        let title = document.createElement('p')
+                            title.style.cssText = 'font-size:22px; font-weight:700;'
+                            title.innerText = 'Dev Tools';
+                            title_container.appendChild(title);
+                        top_bar.appendChild(title_container);
+                        
+                        let tools_container = document.createElement('span');
+                            tools_container.style.cssText = 'display:flex; flex-direction:row; column-gap:10px; margin-top:auto; margin-bottom:auto; margin-right:6px;';
+                            let tool1 = document.createElement('p');
+                                tool1.innerText = 'Console';
+                                tool1.style.cssText = 'font-weight:500;'
+                                tool1.onclick = () => {window.toast('comming soon')}
+                            let tool2 = document.createElement('p');
+                                tool2.innerText = 'Share';
+                                tool2.style.cssText = 'font-weight:500;';
+                                tool2.onclick = () => {window.toast('comming soon')}
+                            let tool3 = document.createElement('p');
+                                tool3.innerText = 'Open in Browser';
+                                tool3.style.cssText = 'font-weight:500;'
+                                tool3.onclick = () => {window.toast('comming soon')}
+                            
+                            tools_container.appendChild(tool1);
+                            tools_container.appendChild(tool2);
+                            tools_container.appendChild(tool3);
+                        top_bar.appendChild(tools_container);
+                            
+                    BigScreenContent.appendChild(top_bar);
+                    
+                var iframe22 = document.createElement('iframe');
+                    iframe22.className = 'iframe22';
+                    iframe22.id = 'iframe22';
+                    iframe22.style.cssText = `
+                       flex-grow:1;
+                    `;
             BigScreenContent.appendChild(iframe22);
             this.BigScreenContent = BigScreenContent;
 
@@ -212,7 +242,7 @@
                 let maxFullScreen = document.createElement('button');
                 maxFullScreen.className = 'icon googlechrome';
                 maxFullScreen.id = 'maxFullScreen';
-                maxFullScreen.onclick = addBigScreenPage;
+                maxFullScreen.onclick = () => {iframe.src ? addBigScreenPage(iframe.src, iframe) : window.toast('dissabled ! start server first')};
                 maxFullScreen.style = `
                            margin-right: 10px;
                         `
@@ -365,12 +395,12 @@
                                 (async () => {
                                     let livePort = await getLivePortIfAvilable();
                                     if (livePort) {
-                                        console.log(`live port gotten its ${livePort}`)
+                                       // console.log(`live port gotten its ${livePort}`)
                                         jsonData.port = livePort;
-                                        console.log(jsonData)
+                                        //console.log(jsonData)
                                         checkServer(jsonData);
                                     } else {
-                                        console.log('port not found showing default window')
+                                        //console.log('port not found showing default window')
                                         showDefaultWindow();
                                     }
                                 })();
@@ -463,7 +493,7 @@
                     });
                     clearTimeout(timeoutId);
                     if (!response || !response.ok) {
-                        console.log('unable to connect server');
+                        //console.log('unable to connect server');
                         //throw new Error(`Server error: ${response.status}`);
                         return;
                     }
@@ -515,6 +545,7 @@
                             } else {
                                 let iframe = document.getElementById('iframe');
                                 if (iframe) {
+                                    
                                     iframe.contentWindow.document.body.innerHTML = default_content;
                                     setTimeout(() => {
                                         const btn = document.getElementById('closeButton')
@@ -533,7 +564,7 @@
                                 if (iframe22) {
                                     iframe22.contentWindow.document.body.innerHTML = default_content;
                                 }else {
-                                  console.log("iframe22 doesnt exists");
+                                  //console.log("iframe22 doesnt exists");
                                 }
 
                             }
@@ -582,36 +613,47 @@
 
             ////////////////////))/))////ll/)//////////////
             // COADING FOR BIG SCREEN
-            function addBigScreenPage() {
-                
-                if (!this.reloadBigScreen){
-                    this.reloadBigScreen = (() => {
-                        const iframe3 = BigScreenContent.querySelector("iframe.iframe22");
-                        if (this.isServerOnline){
-                            iframe3.src = `http://localhost:${jsonData.port}`;
-                        }else {
-                            iframe3.contentWindow.document.body.innerHTML = `
-                                    hello brother server is off
-                                `;
-                        }
-                    });
+            function addBigScreenPage(content_link, resizable_screen) {
+                if(editorManager.getFile(e.id, 'id')){
+                    return
                 }
                 
-                if (!this.isBigScreenEnabled){
+                // if (!this.reloadBigScreen){
+                //     this.reloadBigScreen = (() => {
+                //         const iframe3 = BigScreenContent.querySelector("#iframe22");
+                //         if (this.isServerOnline){
+                //             iframe3.src = `http://localhost:${jsonData.port}`;
+                //         }else {
+                //             iframe3.contentWindow.document.body.innerHTML = `
+                //                     hello brother server is off
+                //                 `;
+                //         }
+                //     });
+                // }
+               // console.log(content_link)
+                if (content_link){
+                    BigScreenContent.querySelector('#iframe22').src = content_link;
+                }else{
+                     BigScreenContent.querySelector('#iframe22').innerHTML = resizable_screen.contentWindow.document.body.innerHTML
+                }
+              //  if (!this.isBigScreenEnabled){
                     const bigScreen = new editorFile('Live Server', {
                         type: 'page',
                         render: true,
                         content: BigScreenContent,
                         tabIcon: "icon liveserver",
+                        id: e.id,
+                        hideQuickTools:true,
+                        uri: ' '
                     });
-                    this.isBigScreenEnabled = true;
-                    editorManager.on("save-file", this.reloadBigScreen);
+                    // this.isBigScreenEnabled = true;
+                    // editorManager.on("save-file", this.reloadBigScreen);
                     
-                    bigScreen.on('close', () => {
-                        this.isBigScreenEnabled = false;
-                        editorManager.off("save-file", this.reloadBigScreen);
-                    });
-                }
+                    // bigScreen.on('close', () => {
+                    //     this.isBigScreenEnabled = false;
+                    //     editorManager.off("save-file", this.reloadBigScreen);
+                    // });
+              //  }
               
                 
                 
@@ -620,8 +662,8 @@
         }// cloasing of init functio9n
 
         async destroy() {
-            console.log('destroyed');
-            console.log(this);
+           // console.log('destroyed');
+           // console.log(this);
             document.getElementById('live-server-window')?.remove();
             if (this.liveServerButton) {
                 this.liveServerButton.hide();
