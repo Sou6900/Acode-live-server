@@ -1,6 +1,6 @@
 # CHANGELOGS
 
-# 2.0.3
+# 2.0.5
 > fixed big screen now it's functional 
 > additionally ready to add some new features
 # 2.0.3
