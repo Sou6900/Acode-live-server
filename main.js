@@ -359,7 +359,7 @@
             ///// now start the backend such as defining the differebt typws of variables like getting the file name etc and before UI loading prepare for it like connection with the server etc
             /////// copied this logic from acodex terminal (,by bajrang coarder)
             function resolvePath(rawPath) {
-                console.log(rawPath)
+                //console.log(rawPath)
                 // alert(baseUrl);
                 if (rawPath.startsWith("content://com.termux.documents/tree")) {
                     const path = rawPath.split("::")[1];
@@ -399,7 +399,7 @@
                 savedFilePath = ActiveFile.uri; //the ActiveFile is instance of inbuilt editorManager API
                 cacheFilePath = ActiveFile.cacheFile;
                 Active_file_id = ActiveFile.id;
-                console.log(ActiveFile)
+                //console.log(ActiveFile)
                 if (!savedFilePath && !cacheFilePath) {
                     //  console.log(' saved path or cacheFilePath noy found')
                     return;
@@ -410,7 +410,7 @@
                         const fileName = rawFilePath.split('/').pop();
 
                         const originalPath = resolvePath(rawPath);
-                        console.log(originalPath)
+                        //console.log(originalPath)
                         // console.log(originalPath.split('/')[1][2])
                         if (!originalPath) {
                             return;
@@ -434,7 +434,7 @@
                                         //console.log('port not found showing default window')
                                         showDefaultWindow();
                                         // console.log(([originalPath.split('/')[1], originalPath.split('/')[2]].join("/")))
-                                        if (window.BuildInfo.versionCode > 963) {
+                                        if (window.BuildInfo.versionCode >= 963) {
                                             const btn = document.getElementById('closeButton');
                                             btn?.click();
                                             await start_in_app_server([originalPath.split('/')[1], originalPath.split('/')[2]].join("/"), Active_file_id);
@@ -527,7 +527,7 @@
                     //     window.cordova.plugin.http.patch(`http://localhost:${jsonData.port}/setup`, JSON.stringify(jsonData), {'Content-Type': 'application/json'}, (resolve)=>{resolve}, (reject)=>{reject})
                     // })
                   //  await check_this_port(jsonData.port, 5000, data=JSON.stringify(jsonData))
-                    console.log(jsonDataDuplicate)
+                    //console.log(jsonDataDuplicate)
                     let response = undefined;
                     response = await fetch(`http://localhost:${jsonData.port}/setup`, {
                         method: 'PATCH',
@@ -546,7 +546,7 @@
                         return false;
                     }
                         const data = await response.json();
-                        console.log(data);
+                        //console.log(data);
                     setTimeout(() => {
                         let iframe = document.getElementById('iframe');
                         if (iframe) {
@@ -601,7 +601,7 @@
                             } else {
                                 let iframe = document.getElementById('iframe');
                                 if (iframe) {
-
+                                    //console.log(" getting content window ")
                                     iframe.contentWindow.document.body.innerHTML = default_content;
                                     setTimeout(() => {
                                         const btn = document.getElementById('closeButton')

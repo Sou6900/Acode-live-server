@@ -1,6 +1,10 @@
 # CHANGELOGS
 
 # 2.0.6
+> added support for playstore version (1.11.5)
+> removed useless logs
+
+# 2.0.6
 > Added Compatibility to work with new Acode's inbuilt terminal 
 
 # 2.0.5
