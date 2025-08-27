@@ -1,5 +1,8 @@
 # CHANGELOGS
 
+# 2.0.6
+> Added Compatibility to work with new Acode's inbuilt terminal 
+
 # 2.0.5
 > fixed big screen now it's functional 
 > additionally ready to add some new features
