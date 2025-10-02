@@ -1,5 +1,8 @@
 # CHANGELOGS
 
+# 2.0.8
+> added auto install all modules support for alpine
+
 # 2.0.6
 > added support for playstore version (1.11.5)
 > removed useless logs

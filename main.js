@@ -161,7 +161,7 @@
                 command += "  apk add py3-pip\n";
                 command += "  git clone https://github.com/hackesofice/Acode-live-server-backend.git\n";
                 command += "  cd Acode-live-server-backend\n";
-                command += "  pip install -r requirements.txt\n";
+                command += "  apk add --no-cache py3-flask py3-requests py3-flask-cors py3-jinja2";
                 command += "  python3 main.py\n";
                 command += "fi\n";
                 terminal.write(server.id, command)
