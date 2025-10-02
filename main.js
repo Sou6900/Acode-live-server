@@ -151,19 +151,19 @@
                     setTimeout(resolve, 1000)})
                 // nowg exes ute ckmmands
                 //let command = `chmod -R 777 '/'\n\n\n`;
-                let command = "if [ -d 'Acode-live-server-backend' ]; then\n";
-                command += "  cd Acode-live-server-backend && python3 main.py\n";
-                command += "else\n";
-                command += "  apk update\n";
-                command += "  apk upgrade\n";
-                command += "  apk add git\n";
-                command += "  apk add python3\n";
-                command += "  apk add py3-pip\n";
-                command += "  git clone https://github.com/hackesofice/Acode-live-server-backend.git\n";
-                command += "  cd Acode-live-server-backend\n";
-                command += "  apk add --no-cache py3-flask py3-requests py3-flask-cors py3-jinja2";
-                command += "  python3 main.py\n";
-                command += "fi\n";
+               let command = "if [ -d 'Acode-live-server-backend' ]; then\n";
+                  command += "  cd Acode-live-server-backend && python3 main.py\n";
+                  command += "else\n";
+                  command += "  apk update\n";
+                  command += "  apk upgrade\n";
+                  command += "  apk add git\n";
+                  command += "  apk add python3\n";
+                  command += "  apk add py3-pip\n";
+                  command += "  git clone https://github.com/hackesofice/Acode-live-server-backend.git\n";
+                  command += "  cd Acode-live-server-backend\n";
+                  command += "  apk add --no-cache py3-flask py3-requests py3-flask-cors py3-jinja2\n";
+                  command += "  python3 main.py\n";
+                  command += "fi\n";
                 terminal.write(server.id, command)
 
                 // re open that tab
