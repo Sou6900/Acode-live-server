@@ -39,7 +39,7 @@ liveserver/
    or
    
    ```bash
-   git clone git clone https://github.com/Sou6900/Acode_Template
+   git clone https://github.com/Sou6900/Acode_Template
    ````
 
 2. change plugin template name
