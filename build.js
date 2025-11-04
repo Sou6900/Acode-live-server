@@ -1,3 +1,4 @@
+// build.js
 import { build } from "esbuild";
 import fs from "fs";
 import archiver from "archiver";
@@ -14,12 +15,13 @@ const color = {
   dim: "\x1b[2m",
 };
 
-// CLI / env flag
+// cli flag for watch mode
 const args = process.argv.slice(2);
 const WATCH = args.includes("--watch") || process.env.WATCH === "1";
 
-const pkg = JSON.parse(fs.readFileSync("package.json", "utf-8"));
-const version = pkg.version || "0.0.0";
+// read plugin.json ~ fallbacks if missing
+const pluginJson = JSON.parse(fs.readFileSync("plugin.json", "utf-8"));
+const version = pluginJson.version || "1.0.0";
 const zipName = `liveserver-v${version}.zip`;
 
 let isBuilding = false;
@@ -32,6 +34,7 @@ async function bundle() {
   console.log(`${color.cyan}Building...${color.reset}`);
 
   try {
+    // 🔹 Build main bundle
     await build({
       entryPoints: ["src/main.js"],
       bundle: true,
@@ -43,26 +46,50 @@ async function bundle() {
 
     console.log(`${color.green}✅ esbuild bundle done → dist/main.js${color.reset}`);
 
-    // remove old zip
+    // 🔹 Remove old zip if exists
     if (fs.existsSync(zipName)) fs.unlinkSync(zipName);
 
-    // prepare archive
     const output = fs.createWriteStream(zipName);
     const archive = archiver("zip", { zlib: { level: 9 } });
     archive.pipe(output);
 
-    // files to include
+    // 🔹 Core plugin files
     archive.file("dist/main.js", { name: "main.js" });
     if (fs.existsSync("plugin.json")) archive.file("plugin.json", { name: "plugin.json" });
     if (fs.existsSync("icon.png")) archive.file("icon.png", { name: "icon.png" });
 
-    // wait for finalize + stream close (attach listeners BEFORE finalize)
+    // 🔹 Optional MD / extra files
+    const extras = [];
+
+    if (pluginJson.readme && fs.existsSync(pluginJson.readme)) {
+      extras.push(pluginJson.readme);
+    }
+    if (pluginJson.changelogs && fs.existsSync(pluginJson.changelogs)) {
+      extras.push(pluginJson.changelogs);
+    }
+    if (pluginJson.license && fs.existsSync(pluginJson.license)) {
+      extras.push(pluginJson.license);
+    }
+
+    // 🔹 User custom files array
+    if (Array.isArray(pluginJson.files)) {
+      for (const f of pluginJson.files) {
+        if (fs.existsSync(f)) extras.push(f);
+      }
+    }
+
+    // Add all extra files to archive
+    for (const file of extras) {
+      const base = path.basename(file);
+      archive.file(file, { name: base });
+      console.log(`${color.dim}  ↳ included: ${base}${color.reset}`);
+    }
+
     await new Promise((resolve, reject) => {
       output.on("close", resolve);
       output.on("end", resolve);
       output.on("error", reject);
       archive.on("error", reject);
-
       archive.finalize().catch(reject);
     });
 
@@ -78,27 +105,22 @@ async function bundle() {
 }
 
 (async () => {
-  // build once immediately
   await bundle();
 
   if (WATCH) {
     console.log(`${color.dim}  Watching for file changes in src/...${color.reset}`);
 
-    // small debounce to avoid multiple builds
     fs.watch("src", { recursive: false }, (event, filename) => {
       if (!filename) return;
-      if (!/\.(js|css|json)$/i.test(filename)) return;
+      if (!/\.(js|css|json|md)$/i.test(filename)) return;
 
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(async () => {
         console.log(`${color.bold}Detected change in ${filename}${color.reset}`);
         await bundle();
-      }, 500);
+      }, 600);
     });
-
-    // keep process alive
   } else {
-    // exit after single build
     process.exit(0);
   }
 })();
